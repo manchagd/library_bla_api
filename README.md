@@ -4,8 +4,6 @@ This project is a Rails API application for managing library resources.
 
 ## 1. Installation From Scratch
 
-To set up the application from a clean environment:
-
 ### System Requirements
 - **Ruby**: 3.x (Managed via rbenv/rvm/asdf)
 - **SQLite3**: For development/test databases
@@ -19,6 +17,9 @@ cd library_bla
 
 # Install dependencies
 bundle install
+
+# Setup database
+rails db:create db:migrate db:seed
 ```
 
 ## 2. Running the Application
@@ -30,49 +31,61 @@ rails server
 The API will be available at `http://localhost:3000`.
 
 ### Test Mode
-To run the test suite:
 ```bash
 bundle exec rspec
+bundle exec rubocop
 ```
 
 ## 3. Architecture, Design & Conventions
 
 ### High-Level Architecture
-This project follows a strict **Service-Oriented Architecture** within Rails:
-- **Controllers**: Thin layer, responsible only for HTTP translation and calling EntryPoints.
-- **Interactors**: All business logic resides in `app/interactors`.
-- **Controllers**: Thin layer, responsible only for HTTP translation and calling EntryPoints.
-- **Interactors**: All business logic resides in `app/interactors`.
-- **EntryPoints**: Public interface for business logic, located in `app/services/request_entry_point.rb`.
-- **Authentication**: Stateless JWT via Devise (`devise-jwt`). Tokens expire in 30 minutes.
+- **Controllers**: Thin layer, HTTP translation only. Delegate to `RequestEntryPoint` services.
+- **Services**: Business logic in `app/interactors/request_entry_point/<domain>/<action>.rb`.
+- **Base Classes**: `BaseService` (single action), `BasePipeline` (organizers).
+- **Authentication**: Stateless JWT via `devise-jwt`. Tokens expire in 30 minutes.
 - **Authorization**: Role-based access control via `Pundit`.
+- **Serialization**: `Blueprinter`. All responses: `{ data: ..., errors: [] }`.
 
-### Directories
-- `app/interactors`: Contains `BaseService` (single action) and `BasePipeline` (organizers).
-- `app/errors`: Domain-specific error classes.
-- `app/services`: Request Entry Points.
+### Directory Structure
+```
+app/
+├── blueprints/           # Serializers (BookBlueprint, UserBlueprint)
+├── controllers/          # Thin controllers
+├── interactors/          # BaseService, BasePipeline, RequestEntryPoint/*
+├── models/errors/        # Domain-specific errors
+└── policies/             # Pundit policies
+```
 
-### Conventions
-- **Error Handling**: Centralized in `ApplicationController` via `ErrorHandling` concern.
-- **Serialization**: Uses `Blueprinter`. All responses match `{ data: ..., errors: ... }`.
+### Adding New Services
+1. Create service in `app/interactors/request_entry_point/<domain>/<action>.rb`
+2. Inherit from `BaseService`
+3. Implement `def call` method
+4. Call from controller: `RequestEntryPoint::<Domain>::<Action>.call(...)`
 
 ## 4. API Documentation & Guidelines
 
 ### Swagger UI
-API documentation is available at `/api-docs`.
-You can view and test endpoints directly via the Swagger interface.
+API documentation available at `/api-docs`.
 
-### Responses
-All API endpoints return JSON in the following format:
-```json
-{
-  "data": { ... },
-  "errors": []
-}
-```
+### Endpoints
 
-### Adding New Endpoints
-1. Define the route.
-2. Create a `RequestEntryPoint` wrapper.
-3. Implement the logic in an Interactor.
-4. Call the EntryPoint from the Controller.
+| Method | Path | Description | Auth Required | Role |
+|--------|------|-------------|---------------|------|
+| POST | `/api/v1/auth/login` | Login | No | - |
+| DELETE | `/api/v1/auth/logout` | Logout | Yes | - |
+| GET | `/api/v1/books` | List/Search books | Yes | Any |
+| GET | `/api/v1/books?query=...` | Search by title/author/genre | Yes | Any |
+| GET | `/api/v1/books/:id` | Show book | Yes | Any |
+| POST | `/api/v1/books` | Create book | Yes | Librarian |
+| PATCH | `/api/v1/books/:id` | Update book | Yes | Librarian |
+| DELETE | `/api/v1/books/:id` | Delete book | Yes | Librarian |
+| GET | `/api/v1/borrowings` | List borrowings | Yes | Any |
+| POST | `/api/v1/borrowings` | Create borrowing | Yes | Any |
+| PATCH | `/api/v1/borrowings/:id/return_book` | Return book | Yes | Owner/Librarian |
+
+### Error Handling
+Errors use custom classes under `app/models/errors/` and are rescued centrally in `ErrorHandling` concern.
+
+### Test Accounts (Development)
+- **Librarian**: `librarian@example.com` / `password`
+- **Member**: `member@example.com` / `password`

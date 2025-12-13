@@ -9,6 +9,10 @@ class BookPolicy < ApplicationPolicy
     true
   end
 
+  def search?
+    true
+  end
+
   def create?
     user.librarian?
   end

@@ -47,6 +47,13 @@ paths:
       - Books
       security:
       - Bearer: []
+      parameters:
+      - name: query
+        in: query
+        required: false
+        description: Search by title/author/genre
+        schema:
+          type: string
       responses:
         '200':
           description: books found
@@ -87,55 +94,60 @@ paths:
                   - genre
                   - isbn
                   - total_copies
-  "/api/v1/borrowings":
+  "/api/v1/books/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
     get:
-      summary: List borrowings
+      summary: Show book
       tags:
-      - Borrowings
+      - Books
       security:
       - Bearer: []
       responses:
         '200':
-          description: borrowings list
-    post:
-      summary: Create borrowing
+          description: book found
+        '404':
+          description: book not found
+    patch:
+      summary: Update book
       tags:
-      - Borrowings
+      - Books
       security:
       - Bearer: []
       parameters: []
       responses:
-        '201':
-          description: borrowing created
+        '200':
+          description: book updated
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                borrowing:
+                book:
                   type: object
                   properties:
-                    book_id:
+                    title:
+                      type: string
+                    author:
+                      type: string
+                    genre:
+                      type: string
+                    total_copies:
                       type: integer
-                  required:
-                  - book_id
-  "/api/v1/borrowings/{id}/return_book":
-    patch:
-      summary: Return book
+    delete:
+      summary: Delete book
       tags:
-      - Borrowings
+      - Books
       security:
       - Bearer: []
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
-        '200':
-          description: book returned
+        '204':
+          description: book deleted
 servers:
 - url: http://{defaultHost}
   variables:

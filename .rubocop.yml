@@ -30,3 +30,11 @@ Metrics/MethodLength:
 
 Metrics/CyclomaticComplexity:
   Max: 25
+
+RSpec/VariableName:
+  AllowedPatterns:
+    - Authorization
+
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/requests/**/*'
