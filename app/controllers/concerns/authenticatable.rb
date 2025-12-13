@@ -10,18 +10,18 @@ module Authenticatable
   private
 
   def authenticate_request!
-    token = request.headers["Authorization"]&.split&.last
-    raise Errors::Auth::InvalidToken, "Missing token" unless token
+    token = request.headers['Authorization']&.split&.last
+    raise Errors::Auth::InvalidToken, 'Missing token' unless token
 
     decoded_token = Warden::JWTAuth::TokenDecoder.new.call(token)
-    user = User.find(decoded_token["sub"])
+    user = User.find(decoded_token['sub'])
 
-    raise Errors::Auth::RevokedToken if user.jti != decoded_token["jti"]
+    raise Errors::Auth::RevokedToken if user.jti != decoded_token['jti']
 
     @current_user = user
   rescue JWT::DecodeError
-    raise Errors::Auth::InvalidToken, "Invalid token"
+    raise Errors::Auth::InvalidToken, 'Invalid token'
   rescue ActiveRecord::RecordNotFound
-    raise Errors::Auth::Unauthorized, "User not found"
+    raise Errors::Auth::Unauthorized, 'User not found'
   end
 end

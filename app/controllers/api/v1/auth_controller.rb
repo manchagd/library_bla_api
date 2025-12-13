@@ -12,12 +12,8 @@ module Api
         )
 
         if result.success?
-          render_response(
-            data: {
-              token: result.token,
-              user: UserBlueprint.render_as_hash(result.user)
-            }
-          )
+          data = { token: result.token, user: UserBlueprint.render_as_hash(result.user) }
+          render_response(data: data)
         else
           render_error(message: result.message, status: :unauthorized, code: :unauthorized)
         end
@@ -27,7 +23,7 @@ module Api
         result = RequestEntryPoint::Auth::Logout.call(user: current_user)
 
         if result.success?
-          render_response(data: { message: "Logged out successfully" })
+          render_response(data: { message: 'Logged out successfully' })
         else
           render_error(message: result.message, status: :unprocessable_entity, code: :unprocessable_entity)
         end

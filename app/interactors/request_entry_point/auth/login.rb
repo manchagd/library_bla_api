@@ -13,7 +13,7 @@ module RequestEntryPoint
           context.user = user
           context.token = token
         else
-          context.fail!(message: "Invalid credentials")
+          context.fail!(message: 'Invalid credentials')
         end
       end
     end

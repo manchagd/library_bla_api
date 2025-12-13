@@ -18,7 +18,7 @@ module ErrorHandling
   def handle_standard_error(exception)
     Rails.logger.error(exception)
     render_error(
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       status: :internal_server_error,
       code: :internal_server_error
     )
@@ -52,7 +52,7 @@ module ErrorHandling
   end
 
   def handle_unauthorized(_exception)
-    render_error(message: "You are not authorized to perform this action", status: :forbidden, code: :forbidden)
+    render_error(message: 'You are not authorized to perform this action', status: :forbidden, code: :forbidden)
   end
 
   def handle_unauthenticated(exception)
@@ -60,6 +60,6 @@ module ErrorHandling
   end
 
   def handle_revoked_token(_exception)
-    render_error(message: "Token has been revoked", status: :unauthorized, code: :unauthorized)
+    render_error(message: 'Token has been revoked', status: :unauthorized, code: :unauthorized)
   end
 end

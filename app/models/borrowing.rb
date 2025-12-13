@@ -25,6 +25,6 @@ class Borrowing < ApplicationRecord
     # The requirement is "exactly 2 weeks".
     return if due_at == borrowed_at + 2.weeks
 
-    errors.add(:due_at, "must be exactly 2 weeks after borrowed_at")
+    errors.add(:due_at, 'must be exactly 2 weeks after borrowed_at')
   end
 end
