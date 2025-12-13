@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_13_180000) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_13_190000) do
   create_table "books", force: :cascade do |t|
     t.string "title", null: false
     t.string "author", null: false
@@ -32,6 +32,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_13_180000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["book_id"], name: "index_borrowings_on_book_id"
+    t.index ["due_at", "user_id"], name: "index_active_borrowings_on_due_at_and_user", where: "status = 0"
+    t.index ["due_at"], name: "index_active_borrowings_on_due_at", where: "status = 0"
     t.index ["user_id", "book_id"], name: "index_unique_active_borrowing", unique: true, where: "status = 0"
     t.index ["user_id"], name: "index_borrowings_on_user_id"
   end

@@ -236,6 +236,20 @@ paths:
           description: borrowing not active
         '404':
           description: borrowing not found
+  "/api/v1/dashboard":
+    get:
+      summary: Show dashboard
+      tags:
+      - Dashboard
+      security:
+      - Bearer: []
+      description: Returns role-specific dashboard. Librarians see aggregate stats.
+        Members see their borrowings.
+      responses:
+        '200':
+          description: member dashboard
+        '401':
+          description: unauthorized
 servers:
 - url: http://{defaultHost}
   variables:

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post 'auth/login', to: 'auth#login'
       delete 'auth/logout', to: 'auth#logout'
+      resource :dashboard, only: :show
       resources :books
       resources :borrowings, only: %i[index show create] do
         member do
