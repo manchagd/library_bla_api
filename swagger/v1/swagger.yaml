@@ -4,6 +4,42 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/auth/login":
+    post:
+      summary: Login
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: logged in
+        '401':
+          description: invalid credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/api/v1/auth/logout":
+    delete:
+      summary: Logout
+      tags:
+      - Auth
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: logged out
+        '401':
+          description: missing token
   "/api/v1/books":
     get:
       summary: List books
