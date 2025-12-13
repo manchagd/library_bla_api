@@ -2,7 +2,7 @@
 
 class BorrowingPolicy < ApplicationPolicy
   def index?
-    user.librarian? || user.member? # Members can see their own, filtered by scope
+    user.librarian? || user.member?
   end
 
   def show?
@@ -13,13 +13,8 @@ class BorrowingPolicy < ApplicationPolicy
     user.member?
   end
 
-  def update?
+  def return?
     user.librarian?
-  end
-
-  # Custom action
-  def return_book?
-    user.librarian? || (user.member? && record.user_id == user.id)
   end
 
   class Scope < Scope
