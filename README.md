@@ -1,24 +1,70 @@
-# README
+# Library Bla API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This project is a Rails API application for managing library resources.
 
-Things you may want to cover:
+## 1. Installation From Scratch
 
-* Ruby version
+To set up the application from a clean environment:
 
-* System dependencies
+### System Requirements
+- **Ruby**: 3.x (Managed via rbenv/rvm/asdf)
+- **SQLite3**: For development/test databases
+- **Bundler**: To manage gems
 
-* Configuration
+### Setup Commands
+```bash
+# Clone the repository
+git clone <repository_url>
+cd library_bla
 
-* Database creation
+# Install dependencies
+bundle install
+```
 
-* Database initialization
+## 2. Running the Application
 
-* How to run the test suite
+### Development Mode
+```bash
+rails server
+```
+The API will be available at `http://localhost:3000`.
 
-* Services (job queues, cache servers, search engines, etc.)
+### Test Mode
+To run the test suite:
+```bash
+bundle exec rspec
+```
 
-* Deployment instructions
+## 3. Architecture, Design & Conventions
 
-* ...
+### High-Level Architecture
+This project follows a strict **Service-Oriented Architecture** within Rails:
+- **Controllers**: Thin layer, responsible only for HTTP translation and calling EntryPoints.
+- **Interactors**: All business logic resides in `app/interactors`.
+- **EntryPoints**: Public interface for business logic, located in `app/services/request_entry_point.rb`.
+
+### Directories
+- `app/interactors`: Contains `BaseService` (single action) and `BasePipeline` (organizers).
+- `app/errors`: Domain-specific error classes.
+- `app/services`: Request Entry Points.
+
+### Conventions
+- **Error Handling**: Centralized in `ApplicationController` via `ErrorHandling` concern.
+- **Serialization**: Uses `Blueprinter`. All responses match `{ data: ..., errors: ... }`.
+
+## 4. API Documentation & Guidelines
+
+### Responses
+All API endpoints return JSON in the following format:
+```json
+{
+  "data": { ... },
+  "errors": []
+}
+```
+
+### Adding New Endpoints
+1. Define the route.
+2. Create a `RequestEntryPoint` wrapper.
+3. Implement the logic in an Interactor.
+4. Call the EntryPoint from the Controller.
