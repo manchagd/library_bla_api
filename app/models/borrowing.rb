@@ -14,6 +14,7 @@ class Borrowing < ApplicationRecord
   private
 
   def set_due_date
+    self.borrowed_at ||= Time.current
     self.due_at ||= borrowed_at + 2.weeks if borrowed_at.present?
   end
 

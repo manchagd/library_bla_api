@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-module AppErrors
-  class ApplicationError < StandardError
+module Errors
+  module AppErrors
+    class ApplicationError < StandardError
     attr_reader :status, :code, :detail
 
     def initialize(msg = nil, status: :unprocessable_entity, code: nil, detail: nil)
@@ -17,5 +18,7 @@ module AppErrors
         detail: detail
       }
     end
-  end
+    end
+end
+
 end

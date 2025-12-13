@@ -41,7 +41,11 @@ bundle exec rspec
 This project follows a strict **Service-Oriented Architecture** within Rails:
 - **Controllers**: Thin layer, responsible only for HTTP translation and calling EntryPoints.
 - **Interactors**: All business logic resides in `app/interactors`.
+- **Controllers**: Thin layer, responsible only for HTTP translation and calling EntryPoints.
+- **Interactors**: All business logic resides in `app/interactors`.
 - **EntryPoints**: Public interface for business logic, located in `app/services/request_entry_point.rb`.
+- **Authentication**: Stateless JWT via Devise (`devise-jwt`). Tokens expire in 30 minutes.
+- **Authorization**: Role-based access control via `Pundit`.
 
 ### Directories
 - `app/interactors`: Contains `BaseService` (single action) and `BasePipeline` (organizers).
@@ -53,6 +57,10 @@ This project follows a strict **Service-Oriented Architecture** within Rails:
 - **Serialization**: Uses `Blueprinter`. All responses match `{ data: ..., errors: ... }`.
 
 ## 4. API Documentation & Guidelines
+
+### Swagger UI
+API documentation is available at `/api-docs`.
+You can view and test endpoints directly via the Swagger interface.
 
 ### Responses
 All API endpoints return JSON in the following format:

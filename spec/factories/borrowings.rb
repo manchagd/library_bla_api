@@ -5,7 +5,7 @@ FactoryBot.define do
     association :user
     association :book
     borrowed_at { Time.current }
-    due_at { 2.weeks.from_now }
+    due_at { borrowed_at + 2.weeks }
     status { :active }
 
     trait :returned do
