@@ -12,7 +12,7 @@ RSpec.describe Book, type: :model do
     it { is_expected.to validate_presence_of(:isbn) }
     it { is_expected.to validate_presence_of(:total_copies) }
 
-    it { should validate_uniqueness_of(:isbn).case_insensitive }
+    it { is_expected.to validate_uniqueness_of(:isbn).case_insensitive }
     it { is_expected.to validate_numericality_of(:total_copies).is_greater_than_or_equal_to(0).only_integer }
   end
 
