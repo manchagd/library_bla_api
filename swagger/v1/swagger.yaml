@@ -148,6 +148,94 @@ paths:
       responses:
         '204':
           description: book deleted
+  "/api/v1/borrowings":
+    get:
+      summary: List borrowings
+      tags:
+      - Borrowings
+      security:
+      - Bearer: []
+      description: Librarians see all borrowings. Members see only their own.
+      responses:
+        '200':
+          description: member sees only own borrowings
+        '401':
+          description: unauthorized
+    post:
+      summary: Create borrowing
+      tags:
+      - Borrowings
+      security:
+      - Bearer: []
+      description: Members can borrow available books. Cannot borrow same book twice
+        concurrently.
+      parameters: []
+      responses:
+        '201':
+          description: borrowing created
+        '403':
+          description: forbidden for librarian
+        '422':
+          description: book not available
+        '409':
+          description: already borrowed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                borrowing:
+                  type: object
+                  properties:
+                    book_id:
+                      type: integer
+                  required:
+                  - book_id
+  "/api/v1/borrowings/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Show borrowing
+      tags:
+      - Borrowings
+      security:
+      - Bearer: []
+      description: Librarians can see any borrowing. Members can only see their own.
+      responses:
+        '200':
+          description: borrowing found (own)
+        '403':
+          description: forbidden (other user borrowing)
+        '404':
+          description: borrowing not found
+  "/api/v1/borrowings/{id}/return":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    post:
+      summary: Return borrowing
+      tags:
+      - Borrowings
+      security:
+      - Bearer: []
+      description: Only librarians can mark a borrowing as returned.
+      responses:
+        '200':
+          description: borrowing returned
+        '403':
+          description: forbidden for member
+        '422':
+          description: borrowing not active
+        '404':
+          description: borrowing not found
 servers:
 - url: http://{defaultHost}
   variables:

@@ -6,6 +6,8 @@ class Borrowing < ApplicationRecord
 
   enum :status, { active: 0, returned: 1 }, default: :active
 
+  scope :active, -> { where(status: :active) }
+
   validates :borrowed_at, :due_at, presence: true
   validate :due_date_must_be_two_weeks_after_borrowed_date
 
