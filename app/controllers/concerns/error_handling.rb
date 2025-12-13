@@ -6,7 +6,11 @@ module ErrorHandling
   included do
     rescue_from StandardError, with: :handle_standard_error
     rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
-    rescue_from AppErrors::ApplicationError, with: :handle_application_error
+    rescue_from ::Errors::AppErrors::ApplicationError, with: :handle_application_error
+    rescue_from Pundit::NotAuthorizedError, with: :handle_unauthorized
+    rescue_from ::Errors::Auth::InvalidToken, with: :handle_unauthenticated
+    rescue_from ::Errors::Auth::Unauthorized, with: :handle_unauthenticated
+    rescue_from ::Errors::Auth::RevokedToken, with: :handle_revoked_token
   end
 
   private
@@ -14,7 +18,7 @@ module ErrorHandling
   def handle_standard_error(exception)
     Rails.logger.error(exception)
     render_error(
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       status: :internal_server_error,
       code: :internal_server_error
     )
@@ -45,5 +49,17 @@ module ErrorHandling
         }
       ]
     }, status: status
+  end
+
+  def handle_unauthorized(_exception)
+    render_error(message: 'You are not authorized to perform this action', status: :forbidden, code: :forbidden)
+  end
+
+  def handle_unauthenticated(exception)
+    render_error(message: exception.message, status: :unauthorized, code: :unauthorized)
+  end
+
+  def handle_revoked_token(_exception)
+    render_error(message: 'Token has been revoked', status: :unauthorized, code: :unauthorized)
   end
 end

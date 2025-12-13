@@ -14,6 +14,7 @@ class Borrowing < ApplicationRecord
   private
 
   def set_due_date
+    self.borrowed_at ||= Time.current
     self.due_at ||= borrowed_at + 2.weeks if borrowed_at.present?
   end
 
@@ -24,6 +25,6 @@ class Borrowing < ApplicationRecord
     # The requirement is "exactly 2 weeks".
     return if due_at == borrowed_at + 2.weeks
 
-    errors.add(:due_at, "must be exactly 2 weeks after borrowed_at")
+    errors.add(:due_at, 'must be exactly 2 weeks after borrowed_at')
   end
 end
