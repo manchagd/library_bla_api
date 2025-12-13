@@ -25,10 +25,15 @@ RSpec.configure do |config|
       paths: {},
       servers: [
         {
-          url: 'http://{defaultHost}',
+          url: 'http://localhost:3000',
+          description: 'Local development'
+        },
+        {
+          url: 'https://{ngrokHost}',
+          description: 'Ngrok tunnel',
           variables: {
-            defaultHost: {
-              default: 'localhost:3000'
+            ngrokHost: {
+              default: 'your-subdomain.ngrok.io'
             }
           }
         }
