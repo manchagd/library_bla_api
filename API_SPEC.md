@@ -45,22 +45,24 @@ curl -X POST http://localhost:3000/api/v1/auth/login \
 ```json
 {
   "data": {
-    "id": 1,
-    "email": "librarian@example.com",
-    "role": "librarian"
+    "token": "eyJhbGciOiJIUzI1NiJ9...",
+    "user": {
+      "id": 1,
+      "data_type": "user",
+      "email": "librarian@example.com",
+      "role": "librarian"
+    }
   },
   "errors": []
 }
 ```
 
-**Important:** The JWT token is returned in the `Authorization` header of the response.
-
+**Extract token from response body:**
 ```bash
-# Extract token from response header
-TOKEN=$(curl -s -D - -X POST http://localhost:3000/api/v1/auth/login \
+TOKEN=$(curl -s -X POST http://localhost:3000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "librarian@example.com", "password": "password"}' \
-  | grep -i "Authorization:" | cut -d' ' -f2 | tr -d '\r')
+  | jq -r '.data.token')
 
 echo $TOKEN
 ```
@@ -492,18 +494,18 @@ BASE_URL="http://localhost:3000"
 
 # Login as Librarian
 echo "=== Logging in as Librarian ==="
-LIBRARIAN_TOKEN=$(curl -s -D - -X POST "$BASE_URL/api/v1/auth/login" \
+LIBRARIAN_TOKEN=$(curl -s -X POST "$BASE_URL/api/v1/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"email": "librarian@example.com", "password": "password"}' \
-  | grep -i "Authorization:" | cut -d' ' -f2 | tr -d '\r')
+  | jq -r '.data.token')
 echo "Librarian Token: $LIBRARIAN_TOKEN"
 
 # Login as Member
 echo "=== Logging in as Member ==="
-MEMBER_TOKEN=$(curl -s -D - -X POST "$BASE_URL/api/v1/auth/login" \
+MEMBER_TOKEN=$(curl -s -X POST "$BASE_URL/api/v1/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"email": "member@example.com", "password": "password"}' \
-  | grep -i "Authorization:" | cut -d' ' -f2 | tr -d '\r')
+  | jq -r '.data.token')
 echo "Member Token: $MEMBER_TOKEN"
 
 # Get Librarian Dashboard
