@@ -2,9 +2,7 @@
 
 module RequestEntryPoint
   module Auth
-    class Logout
-      include Interactor
-
+    class Logout < BaseService
       def call
         return context.fail!(message: 'User not provided') unless context.user
 

@@ -2,9 +2,7 @@
 
 module RequestEntryPoint
   module Auth
-    class Login
-      include Interactor
-
+    class Login < BaseService
       def call
         user = User.find_by(email: context.email)
 
