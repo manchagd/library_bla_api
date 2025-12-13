@@ -30,3 +30,7 @@ Metrics/MethodLength:
 
 Metrics/CyclomaticComplexity:
   Max: 25
+
+RSpec/VariableName:
+  AllowedPatterns:
+    - Authorization

@@ -8,49 +8,54 @@ module Api
       after_action :verify_policy_scoped, only: :index
 
       def index
-        @books = policy_scope(Book)
-        authorize Book # Policy scope check is separate, but we can authorize the action generally
+        authorize Book
+        result = RequestEntryPoint::Books::ListBooks.call(
+          scope: policy_scope(Book),
+          query: params[:query]
+        )
 
-        pagy, records = pagy(@books)
-        render_response(data: records, meta: pagy_metadata(pagy))
+        pagy, records = pagy(result.books)
+        render_response(data: BookBlueprint.render_as_hash(records), meta: pagy_metadata(pagy))
       end
 
       def show
-        @book = Book.find(params[:id])
-        authorize @book
-        render_response(data: @book)
+        authorize book
+        render_response(data: BookBlueprint.render_as_hash(book))
       end
 
       def create
-        @book = Book.new(book_params)
-        authorize @book
+        authorize Book
+        result = RequestEntryPoint::Books::CreateBook.call(book_params: book_params)
 
-        if @book.save
-          render_response(data: @book, status: :created)
+        if result.success?
+          render_response(data: BookBlueprint.render_as_hash(result.book), status: :created)
         else
-          render_error(message: @book.errors.full_messages, status: :unprocessable_entity, code: :unprocessable_entity)
+          render_error(message: result.message, status: :unprocessable_entity, code: :unprocessable_entity)
         end
       end
 
       def update
-        @book = Book.find(params[:id])
-        authorize @book
+        authorize book
+        result = RequestEntryPoint::Books::UpdateBook.call(book_id: params[:id], book_params: book_params)
 
-        if @book.update(book_params)
-          render_response(data: @book)
+        if result.success?
+          render_response(data: BookBlueprint.render_as_hash(result.book))
         else
-          render_error(message: @book.errors.full_messages, status: :unprocessable_entity, code: :unprocessable_entity)
+          render_error(message: result.message, status: :unprocessable_entity, code: :unprocessable_entity)
         end
       end
 
       def destroy
-        @book = Book.find(params[:id])
-        authorize @book
-        @book.destroy
+        authorize book
+        RequestEntryPoint::Books::DeleteBook.call(book_id: params[:id])
         head :no_content
       end
 
       private
+
+      def book
+        @book ||= Book.find(params[:id])
+      end
 
       def book_params
         params.require(:book).permit(:title, :author, :genre, :isbn, :total_copies)
