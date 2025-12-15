@@ -54,7 +54,7 @@ gem "interactor", "~> 3.2"
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 gem "rswag-specs", "~> 2.17", groups: [:development, :test]
 
-gem "pagy", "~> 9.4"
+gem "pagy", "~> 43.2"
 
 gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
 gem "shoulda-matchers", "~> 7.0", groups: [:development, :test]
