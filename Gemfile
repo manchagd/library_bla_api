@@ -44,7 +44,7 @@ end
 
 
 gem "devise", "~> 4.9"
-gem "devise-jwt", "~> 0.12.1"
+gem "devise-jwt", "~> 0.13.0"
 gem "pundit", "~> 2.5"
 gem "blueprinter", "~> 1.2"
 gem "rswag-api", "~> 2.17"
